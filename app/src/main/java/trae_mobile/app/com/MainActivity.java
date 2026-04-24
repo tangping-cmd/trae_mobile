@@ -39,13 +39,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
 
         setContentView(R.layout.activity_main);
-
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
 
         prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
 
@@ -53,7 +53,8 @@ public class MainActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         errorLayout = findViewById(R.id.errorLayout);
 
-        setupWindowInsets(webView);
+        View rootLayout = findViewById(R.id.rootLayout);
+        setupWindowInsets(rootLayout);
         setupWebView();
         setupErrorRetryButton();
 
@@ -63,8 +64,8 @@ public class MainActivity extends AppCompatActivity {
         handler.postDelayed(fabInjector, 2000);
     }
 
-    private void setupWindowInsets(View webView) {
-        ViewCompat.setOnApplyWindowInsetsListener(webView, (v, windowInsets) -> {
+    private void setupWindowInsets(View rootLayout) {
+        ViewCompat.setOnApplyWindowInsetsListener(rootLayout, (v, windowInsets) -> {
             Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
             v.setPadding(insets.left, insets.top, insets.right, insets.bottom);
             return WindowInsetsCompat.CONSUMED;
