@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TraeSolo</string>
+    <string name="default_url">https://solo.trae.cn/</string>
+    <string name="error_title">加载失败</string>
+    <string name="error_message">网页加载失败，请检查网络连接后重试</string>
+    <string name="btn_retry">重试</string>
+    <string name="btn_home">SOLE</string>
+</resources>
