@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("");
+            getSupportActionBar().setTitle(getString(R.string.app_name));
         }
 
         webView = findViewById(R.id.webView);
