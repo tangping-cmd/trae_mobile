@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupWindowInsets(View webView) {
         ViewCompat.setOnApplyWindowInsetsListener(webView, (v, windowInsets) -> {
             Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
-            v.setPadding(insets.left, 0, insets.right, insets.bottom);
+            v.setPadding(insets.left, insets.top, insets.right, insets.bottom);
             return WindowInsetsCompat.CONSUMED;
         });
     }
@@ -265,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
                 "  c.classList.add((st.side==='L')?'snap-left':'snap-right');" +
                 "  resT();" +
                 "}else{" +
-                "  c.style.top=Math.max(0,Math.min(window.innerHeight-56-80,window.innerHeight-56))+'px';" +
+                "  c.style.top=(window.innerHeight/2 - 28)+'px';" +
                 "  c.style.left=(window.innerWidth-56)+'px';" +
                 "  c.classList.remove('snap-left','snap-right');" +
                 "  c.classList.add('snap-right');" +
