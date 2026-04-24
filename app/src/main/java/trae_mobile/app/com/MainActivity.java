@@ -43,6 +43,14 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setStatusBarColor(android.graphics.Color.TRANSPARENT);
         getWindow().setNavigationBarColor(android.graphics.Color.TRANSPARENT);
 
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            getWindow().getInsetsController().setSystemBarsAppearance(0, android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
+        } else {
+            int flags = getWindow().getDecorView().getSystemUiVisibility();
+            flags &= ~android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            getWindow().getDecorView().setSystemUiVisibility(flags);
+        }
+
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
