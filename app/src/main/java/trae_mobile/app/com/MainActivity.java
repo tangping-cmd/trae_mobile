@@ -85,10 +85,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupImmersiveMode() {
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+
         getWindow().setStatusBarColor(android.graphics.Color.TRANSPARENT);
         getWindow().setNavigationBarColor(android.graphics.Color.TRANSPARENT);
-
-        View decorView = getWindow().getDecorView();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             WindowInsetsController insetsController = getWindow().getInsetsController();
@@ -98,17 +98,16 @@ public class MainActivity extends AppCompatActivity {
                         WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS | WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
                 );
                 insetsController.setSystemBarsBehavior(
-                        WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                        WindowInsetsController.BEHAVIOR_DEFAULT
                 );
             }
         } else {
-            int flags = decorView.getSystemUiVisibility();
+            int flags = getWindow().getDecorView().getSystemUiVisibility();
             flags |= View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
             flags &= ~(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
                     | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
-            decorView.setSystemUiVisibility(flags);
+            getWindow().getDecorView().setSystemUiVisibility(flags);
         }
     }
 
