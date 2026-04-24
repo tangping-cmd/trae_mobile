@@ -112,10 +112,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupWindowInsets() {
-        View rootLayout = findViewById(R.id.rootLayout);
-        ViewCompat.setOnApplyWindowInsetsListener(rootLayout, (v, windowInsets) -> {
+        View contentContainer = findViewById(R.id.contentContainer);
+        ProgressBar progressBarView = findViewById(R.id.progressBar);
+        ViewCompat.setOnApplyWindowInsetsListener(contentContainer, (v, windowInsets) -> {
             Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
             v.setPadding(insets.left, insets.top, insets.right, insets.bottom);
+            if (progressBarView != null) {
+                progressBarView.setTranslationY(insets.top);
+            }
             return WindowInsetsCompat.CONSUMED;
         });
     }
