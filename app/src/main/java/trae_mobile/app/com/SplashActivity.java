@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,8 +26,14 @@ public class SplashActivity extends AppCompatActivity {
         tvAppName.setText(R.string.app_name);
 
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            startActivity(new Intent(SplashActivity.this, MainActivity.class));
+            Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+            startActivity(intent);
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             finish();
         }, SPLASH_DURATION);
+    }
+
+    @Override
+    public void onBackPressed() {
     }
 }

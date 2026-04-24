@@ -3,6 +3,7 @@ package trae_mobile.app.com;
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private View errorLayout;
     private SharedPreferences prefs;
     private boolean isErrorShown = false;
+    private int statusBarInsetTop = 0;
 
     private Handler handler = new Handler(Looper.getMainLooper());
 
@@ -87,26 +89,40 @@ public class MainActivity extends AppCompatActivity {
     private void setupImmersiveMode() {
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
 
-        getWindow().setStatusBarColor(android.graphics.Color.TRANSPARENT);
-        getWindow().setNavigationBarColor(android.graphics.Color.TRANSPARENT);
+        getWindow().setStatusBarColor(Color.TRANSPARENT);
+        getWindow().setNavigationBarColor(Color.TRANSPARENT);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             WindowInsetsController insetsController = getWindow().getInsetsController();
             if (insetsController != null) {
-                insetsController.setSystemBarsAppearance(
-                        0,
-                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS | WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
-                );
-                insetsController.setSystemBarsBehavior(
-                        WindowInsetsController.BEHAVIOR_DEFAULT
-                );
+                insetsController.setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_DEFAULT);
+            }
+        }
+    }
+
+    private void setLightStatusBar(boolean light) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            WindowInsetsController insetsController = getWindow().getInsetsController();
+            if (insetsController != null) {
+                if (light) {
+                    insetsController.setSystemBarsAppearance(
+                            WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+                            WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                    );
+                } else {
+                    insetsController.setSystemBarsAppearance(
+                            0,
+                            WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                    );
+                }
             }
         } else {
             int flags = getWindow().getDecorView().getSystemUiVisibility();
-            flags |= View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-            flags &= ~(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-                    | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+            if (light) {
+                flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            } else {
+                flags &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            }
             getWindow().getDecorView().setSystemUiVisibility(flags);
         }
     }
@@ -116,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
         ProgressBar progressBarView = findViewById(R.id.progressBar);
         ViewCompat.setOnApplyWindowInsetsListener(contentContainer, (v, windowInsets) -> {
             Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+            statusBarInsetTop = insets.top;
             v.setPadding(insets.left, insets.top, insets.right, insets.bottom);
             if (progressBarView != null) {
                 progressBarView.setTranslationY(insets.top);
@@ -172,6 +189,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void detectStatusBarAppearance(String url) {
+        boolean isDarkPage = url != null && !url.contains("about:blank");
+        setLightStatusBar(!isDarkPage);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -218,6 +240,14 @@ public class MainActivity extends AppCompatActivity {
         handler.removeCallbacks(fabInjector);
         if (webView != null) {
             webView.destroy();
+        }
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            setupImmersiveMode();
         }
     }
 
@@ -305,7 +335,7 @@ public class MainActivity extends AppCompatActivity {
                 "  resT();" +
                 "}" +
                 "}";
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             webView.evaluateJavascript(js, null);
         } else {
             webView.loadUrl("javascript:" + js);
@@ -324,6 +354,7 @@ public class MainActivity extends AppCompatActivity {
             super.onPageStarted(view, url, favicon);
             progressBar.setVisibility(View.VISIBLE);
             hideErrorPage();
+            detectStatusBarAppearance(url);
         }
 
         @Override
@@ -332,6 +363,7 @@ public class MainActivity extends AppCompatActivity {
             progressBar.setVisibility(View.GONE);
             saveLastUrl();
             injectFab();
+            detectStatusBarAppearance(url);
         }
 
         @Override
